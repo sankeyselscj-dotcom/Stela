@@ -1,16 +1,20 @@
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
+[app]
+title = Stela Nexus
+package.name = stelanexus
+package.domain = com.stela.nexus
+source.dir =.
+source.include_exts = py,png,jpg,kv,atlas
+version = 1.0
+requirements = python3,kivy
+orientation = portrait
 
-class StelaNexusApp(App):
-    def build(self):
-        layout = BoxLayout(orientation='vertical', padding=50, spacing=20)
-        layout.add_widget(Label(text='STELA NEXUS', font_size='30sp', bold=True))
-        layout.add_widget(Label(text='App funcionando com sucesso! 🚀', font_size='18sp'))
-        btn = Button(text='CLIQUE AQUI', size_hint=(1, 0.3), background_color=(0.2, 0.6, 1, 1))
-        btn.bind(on_press=lambda x: print("Funcionou!"))
-        layout.add_widget(btn)
-        return layout
+[buildozer]
+log_level = 2
 
-StelaNexusApp().run()
+[app:android]
+android.permissions = INTERNET
+android.api = 33
+android.minapi = 21
+android.sdk = 33
+android.ndk = 25b
+android.accept_sdk_license_agreements = True
