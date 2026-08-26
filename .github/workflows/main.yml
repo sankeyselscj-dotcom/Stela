@@ -6,24 +6,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Install Android Build-Tools 37
-        run: |
-          yes | sdkmanager --licenses
-          sdkmanager "build-tools;37.0.0" "build-tools;33.0.2" "platforms;android-33" "platforms;android-34"
-
-      - name: Install Buildozer
+      - name: Install Build-Tools 37 (fix do Aidl)
         run: |
           sudo apt update
-          sudo apt install -y openjdk-17-jdk zip unzip libffi-dev libssl-dev
+          sudo apt install -y zip unzip libffi-dev libssl-dev
           pip install buildozer cython==0.29.36
+          yes | sdkmanager --licenses
+          sdkmanager "build-tools;37.0.0" "build-tools;33.0.2" "platforms;android-33" "platforms;android-34" "platform-tools"
 
       - name: Build APK
         run: buildozer android debug
