@@ -15,21 +15,22 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build APK fix Aidl
+      - name: Build APK fix 37
         run: |
           sudo apt update
           sudo apt install -y zip unzip libffi-dev libssl-dev
           pip install buildozer cython==0.29.36
-          # 1. Deixa o buildozer baixar o SDK dele (vai falhar, é normal)
-          buildozer android debug || true
-          # 2. Aceita a licença NA PASTA DO BUILDOZER
+          # HACK: troca o 37.0.0 por 33.0.2 dentro do python-for-android
+          PYFORA=$(python3 -c "import pythonforandroid; print(pythonforandroid.__path__[0])")
+          echo "Patching $PYFORA"
+          sed -i 's/37.0.0/33.0.2/g' $PYFORA/recommendations.py || true
+          grep -R "37.0.0" $PYFORA --include="*.py" | head
+          sed -i 's/37.0.0/33.0.2/g' $(grep -R "37.0.0" $PYFORA --include="*.py" -l) || true
+          # Agora aceita licença e builda
           mkdir -p ~/.buildozer/android/platform/android-sdk/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059b8ea73142" >> ~/.buildozer/android/platform/android-sdk/licenses/android-sdk-license
-          # 3. Instala o build-tools 37 na pasta dele
-          ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "build-tools;37.0.0" "platforms;android-33" "platform-tools"
-          # 4. Agora sim builda de verdade
           buildozer android debug
 
       - name: Upload APK
